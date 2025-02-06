@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using CandyCoded.HapticFeedback;
+//using CandyCoded.HapticFeedback;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -41,13 +41,13 @@ public class GameManager : MonoBehaviour
     public void Win()
     {
         Debug.Log("You Win!");
-        HapticFeedback.HeavyFeedback();
+        //HapticFeedback.HeavyFeedback();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     public void Lose()
     {
         Debug.Log("You Lose!");
-        HapticFeedback.LightFeedback();
+        //HapticFeedback.LightFeedback();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     public void StartGame()
@@ -58,7 +58,7 @@ public class GameManager : MonoBehaviour
         }
         Debug.Log("Game Started!");
         roundsStarted = true;
-        HapticFeedback.MediumFeedback();
+        //HapticFeedback.MediumFeedback();
         Cursor.lockState = CursorLockMode.None;
     }
 }
