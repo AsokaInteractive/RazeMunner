@@ -17,7 +17,7 @@ public class Player : MonoBehaviour
         }
         else if(collision.CompareTag("Node"))
         {
-            Node.NodeType nodeType = collision.GetComponent<Node>().type;
+            Node.NodeType nodeType = collision.GetComponent<Node>().nodeType;
             switch (nodeType)
             {
                 case Node.NodeType.Start:
