@@ -1,28 +1,27 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class ProceduralGeneration : MonoBehaviour
 {
-    public Vector2Int startCoords, endCoords;
-    public GameObject nodePrefab, startNode;
-    public Node currentNode;
     public LayerMask nodeMask = 1 << 3;
     public int rows, cols;
-    List<Node> nodes;
-    public static event Action OnNodeAdded;
+    public List<Node> nodes = new List<Node>();
+
+    private void Awake()
+    {
+        Node[] tempNodes = FindObjectsOfType<Node>();
+        if(tempNodes != null )
+        {
+            foreach (Node node in tempNodes)
+            {
+                nodes.Add(node);
+            }
+        }
+    }
 
     private void Start()
     {
-        var node = Instantiate(nodePrefab, new Vector3(startCoords.x, startCoords.y, 0), Quaternion.identity);
-        node.transform.SetParent(transform);
-        currentNode = node.GetComponent<Node>();
-        currentNode.nodeType = Node.NodeType.Start;
-        var tempNodes = FindObjectsOfType<Node>();
-        foreach (var tempNode in tempNodes)
-        {
-            nodes.Add(tempNode);
-        }
         StartGeneration();
     }
     private void StartGeneration()
@@ -32,27 +31,13 @@ public class ProceduralGeneration : MonoBehaviour
             for(int y = 0; y < rows; y++)
             {
                 var tempNode = GetNodeAt(x, y);
-                if(x==0 && y==0)
+                if(tempNode != null) //sanity check
                 {
-                    tempNode.nodeType = Node.NodeType.Start;
-                    continue;
-                }
-                else if(tempNode != null)
-                {
-                    int rand = UnityEngine.Random.Range(0, 5);
-                    if(rand == 0)
+                    var connector = GetConnectableNode(tempNode);
+                    if (connector == null)
                     {
-                        var connector = CheckConnectableNode(tempNode);
-                        if (connector == null)
-                        {
-                            tempNode.nodeType = Node.NodeType.End;
-                            return;
-                        }
-                        else
-                        {
-                            tempNode.AddConnection(connector);
-                            connector.AddConnection(tempNode);
-                        }
+                        tempNode.nodeType = Node.NodeType.End;
+                        return;
                     }
                 }
             }
@@ -67,32 +52,54 @@ public class ProceduralGeneration : MonoBehaviour
         }
         return null;
     }
-    private bool CompareNodes(Node node1, Node node2)
-    {
-        return node1 == node2;
-    }
-    private Node CheckConnectableNode(Node node)
+    private Node GetConnectableNode(Node node)
     {
         Node east = GetNodeAt(node.xCoord + 1, node.yCoord);
         Node west = GetNodeAt(node.xCoord - 1, node.yCoord);
         Node north = GetNodeAt(node.xCoord, node.yCoord + 1);
         Node south = GetNodeAt(node.xCoord, node.yCoord - 1);
+        List<Node> availableNodes = new List<Node>();
+        List<Node> validNodes = new List<Node>();
+
         if (east != null && !node.CheckConnection(east))
         {
-            return east;
+            availableNodes.Add(east);
         }
-        else if (west != null && !node.CheckConnection(west))
+        if (west != null && !node.CheckConnection(west))
         {
-            return west;
+            availableNodes.Add(west);
         }
-        else if (north != null && !node.CheckConnection(north))
+        if (north != null && !node.CheckConnection(north))
         {
-            return north;
+            availableNodes.Add(north);
         }
-        else if (south != null && !node.CheckConnection(south))
+        if (south != null && !node.CheckConnection(south))
         {
-            return south;
+            availableNodes.Add(south);
         }
-        return null;
+
+        bool hasValidNode = false;
+        if (availableNodes.Count <= 0)
+            return null;
+        else
+        {
+            foreach(Node n in availableNodes)
+            {
+                if (!node.CheckConnection(n))
+                {
+                    validNodes.Add(n);
+                    hasValidNode = true;
+                }
+            }
+            if(!hasValidNode) 
+                return null;
+            else
+            {
+                Node validNode = validNodes[Random.Range(0, validNodes.Count)];
+                node.AddConnection(validNode);
+                validNode.AddConnection(node);
+                return validNode;
+            }
+        }
     }
 }

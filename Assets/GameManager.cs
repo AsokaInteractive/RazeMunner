@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     private List<Node> allNodes;
     public int nodesTouched;
-    public bool roundsStarted, canWin;
+    public bool roundStarted, canWin;
 
     private void Awake()
     {
@@ -24,7 +24,12 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         allNodes = new List<Node>(FindObjectsOfType<Node>());  
-        Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.lockState = CursorLockMode.Locked;
+    }
+    private void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.R))
+            Reload();
     }
     public void NodeTouched(Node node)
     {
@@ -42,23 +47,27 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("You Win!");
         //HapticFeedback.HeavyFeedback();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        Invoke(nameof(Reload), 1);
     }
     public void Lose()
     {
         Debug.Log("You Lose!");
         //HapticFeedback.LightFeedback();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        Invoke(nameof(Reload), 1);
     }
     public void StartGame()
     {
-        if(roundsStarted)
+        if(roundStarted)
         {
             return;
         }
         Debug.Log("Game Started!");
-        roundsStarted = true;
+        roundStarted = true;
         //HapticFeedback.MediumFeedback();
-        Cursor.lockState = CursorLockMode.None;
+        //Cursor.lockState = CursorLockMode.None;
+    }
+    private void Reload()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

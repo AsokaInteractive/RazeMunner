@@ -7,6 +7,7 @@ public class Node : MonoBehaviour
 {
     public GameObject bNorth, bSouth, bEast, bWest;
     public List<Node> connectedNodes;
+    private SpriteRenderer sr;
     public enum BoundaryType
     {
         North,
@@ -23,13 +24,23 @@ public class Node : MonoBehaviour
     public NodeType nodeType;
     public bool nodeTouched;
     public int xCoord, yCoord;
-
     private void Awake()
     {
+        sr = GetComponent<SpriteRenderer>();
         xCoord = (int)transform.position.x;
         yCoord = (int)transform.position.y;
     }
-
+    private void Start()
+    {
+        Invoke(nameof(SetColor), 1);
+    }
+    private void SetColor()
+    {
+        if (nodeType == NodeType.Start)
+            sr.color = Color.green;
+        if(nodeType == NodeType.End)
+            sr.color = Color.red;
+    }
     public void SetNodeTouched()
     {
         nodeTouched = true;
@@ -38,13 +49,34 @@ public class Node : MonoBehaviour
     {
         if(remove)        
             connectedNodes.Remove(node);        
-        else if(!connectedNodes.Contains(node))
+        if(!connectedNodes.Contains(node)) //sanity check
+        {
             connectedNodes.Add(node);
+            DisableBoundary(CheckDirection(node));
+        }
     }
     public bool CheckConnection(Node node)
     {
-        if(connectedNodes.Contains(node)) return true;
-        else return false;
+        if(connectedNodes.Contains(node))
+            return true;        
+        else 
+            return false;
+    }
+    private BoundaryType CheckDirection(Node node)
+    {
+        if (node.transform.position.y > transform.position.y)
+            return BoundaryType.North;
+        else if (node.transform.position.y < transform.position.y)
+            return BoundaryType.South;
+        else if (node.transform.position.x > transform.position.x)
+            return BoundaryType.East;
+        else if (node.transform.position.x < transform.position.x)
+            return BoundaryType.West;
+        else
+        {
+            Debug.LogError("Invalid Direction?");
+            return BoundaryType.North;
+        }
     }
     public void DisableBoundary(BoundaryType bt, bool enable = false)
     {
