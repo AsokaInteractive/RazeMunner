@@ -2,28 +2,40 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private bool canMove = false;
+    public static Player Instance;
+    public bool canMove = false;
     public ParticleSystem winPS;
 
+    private void Awake()
+    {
+        if(Instance != null)
+        {
+            Debug.LogError("Another Player Instance Found");
+            Destroy(Instance.gameObject);
+        }
+        Instance = this;
+    }
     private void Start()
     {
-        transform.position = new Vector3(0, 0, 0);
+        transform.position = Vector3.zero;
         //Invoke(nameof(StartGame), 1f);
     }
-    private void StartGame()
-    {
-        canMove = true;
-    }
+    public float moveSpeed = 1f;
     private void Update()
     {
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButtonDown(0) && !canMove)
         {
             canMove = true;
+            transform.position = Vector3.zero;
         }
         if (canMove)
         {
             var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            transform.position = new Vector3(mousePos.x, mousePos.y, 0);
+            transform.Translate(new Vector3(mousePos.x - transform.position.x, mousePos.y - transform.position.y, 0) * Time.deltaTime * moveSpeed);
+        }
+        if(Physics2D.CircleCast(transform.position, 0.1f, Vector3.forward, 0f, 1 << 6))
+        {
+            Debug.Log("Close to a boundary");
         }
     }
 
@@ -54,7 +66,7 @@ public class Player : MonoBehaviour
                     print("Hit normal node!");
                 break;
             }
-            GameManager.instance.NodeTouched(collision.GetComponent<Node>());
+            //GameManager.instance.NodeTouched(collision.GetComponent<Node>());
         }
     }
 }

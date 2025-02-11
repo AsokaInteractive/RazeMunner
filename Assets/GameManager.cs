@@ -31,17 +31,23 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.R))
             Reload();
     }
-    public void NodeTouched(Node node)
+    //public void NodeTouched(Node node)
+    //{
+    //    if (!node.nodeTouched)
+    //    {
+    //        node.nodeTouched = true;
+    //        nodesTouched++;
+    //        if (nodesTouched == allNodes.Count)
+    //        {
+    //            canWin = true;
+    //        }
+    //    }
+    //}
+    public void ResetLevel()
     {
-        if (!node.nodeTouched)
-        {
-            node.nodeTouched = true;
-            nodesTouched++;
-            if (nodesTouched == allNodes.Count)
-            {
-                canWin = true;
-            }
-        }
+        roundStarted = false;
+        Player.Instance.canMove = false;
+        Player.Instance.transform.position = Vector3.zero;
     }
     public void Win()
     {
@@ -53,7 +59,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("You Lose!");
         //HapticFeedback.LightFeedback();
-        Invoke(nameof(Reload), 1);
+        Invoke(nameof(ResetLevel), 1);
     }
     public void StartGame()
     {

@@ -8,6 +8,7 @@ public class Node : MonoBehaviour
     public GameObject bNorth, bSouth, bEast, bWest;
     public List<Node> connectedNodes;
     private SpriteRenderer sr;
+    public Material normal, end, start;
     public enum BoundaryType
     {
         North,
@@ -36,10 +37,14 @@ public class Node : MonoBehaviour
     }
     private void SetColor()
     {
-        if (nodeType == NodeType.Start)
-            sr.color = Color.green;
-        if(nodeType == NodeType.End)
-            sr.color = Color.red;
+        if(nodeType == NodeType.Start)
+        {
+            sr.material = start;
+        }
+        else if(nodeType == NodeType.End)
+        {
+            sr.material = end;
+        }
     }
     public void SetNodeTouched()
     {
