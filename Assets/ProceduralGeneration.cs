@@ -179,22 +179,26 @@ public class ProceduralGeneration : MonoBehaviour
     {
         // Use Breadth-First Search (BFS) to check if all nodes are reachable
         HashSet<Node> visited = new HashSet<Node>();
-        Queue<Node> queue = new Queue<Node>();
+       // Queue<Node> queue = new Queue<Node>();
+        Stack<Node> stack = new Stack<Node>();
 
         // Start from the first node (or any node)
         Node startNode = nodes[0];
-        queue.Enqueue(startNode);
+        //queue.Enqueue(startNode);
+        stack.Push(startNode);
         visited.Add(startNode);
 
-        while (queue.Count > 0)
+        while (stack.Count > 0)
         {
-            Node current = queue.Dequeue();
+           // Node current = queue.Dequeue();
+            Node current = stack.Pop();
             foreach (Node neighbor in current.connectedNodes)
             {
                 if (!visited.Contains(neighbor))
                 {
                     visited.Add(neighbor);
-                    queue.Enqueue(neighbor);
+                   // queue.Enqueue(neighbor);
+                    stack.Push(neighbor);
                 }
             }
         }
