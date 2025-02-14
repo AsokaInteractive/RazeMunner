@@ -1,4 +1,5 @@
 using UnityEngine;
+using CandyCoded.HapticFeedback;
 
 public class Player : MonoBehaviour
 {

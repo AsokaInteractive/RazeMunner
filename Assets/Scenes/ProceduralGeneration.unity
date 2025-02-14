@@ -187,9 +187,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2002245351691229713, guid: 85d9196facbf464448f028e9e678e215, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5893806468014856718, guid: 85d9196facbf464448f028e9e678e215, type: 3}
       propertyPath: m_Name
       value: BoundaryPrefab (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5893806468014856718, guid: 85d9196facbf464448f028e9e678e215, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 8598835407838854026, guid: 85d9196facbf464448f028e9e678e215, type: 3}
       propertyPath: m_LocalScale.y
@@ -248,9 +256,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2002245351691229713, guid: 85d9196facbf464448f028e9e678e215, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5893806468014856718, guid: 85d9196facbf464448f028e9e678e215, type: 3}
       propertyPath: m_Name
       value: BoundaryPrefab (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5893806468014856718, guid: 85d9196facbf464448f028e9e678e215, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 8598835407838854026, guid: 85d9196facbf464448f028e9e678e215, type: 3}
       propertyPath: m_LocalScale.x
@@ -940,7 +956,7 @@ TrailRenderer:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 1
-        value: 0.082473755
+        value: 0.5710602
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -1643,9 +1659,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2002245351691229713, guid: 85d9196facbf464448f028e9e678e215, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5893806468014856718, guid: 85d9196facbf464448f028e9e678e215, type: 3}
       propertyPath: m_Name
       value: BoundaryPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 5893806468014856718, guid: 85d9196facbf464448f028e9e678e215, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 8598835407838854026, guid: 85d9196facbf464448f028e9e678e215, type: 3}
       propertyPath: m_LocalScale.y
@@ -8835,9 +8859,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2002245351691229713, guid: 85d9196facbf464448f028e9e678e215, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5893806468014856718, guid: 85d9196facbf464448f028e9e678e215, type: 3}
       propertyPath: m_Name
       value: BoundaryPrefab (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5893806468014856718, guid: 85d9196facbf464448f028e9e678e215, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 8598835407838854026, guid: 85d9196facbf464448f028e9e678e215, type: 3}
       propertyPath: m_LocalScale.x
