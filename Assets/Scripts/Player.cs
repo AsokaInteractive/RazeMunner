@@ -1,11 +1,21 @@
 using UnityEngine;
 using CandyCoded.HapticFeedback;
+using System.Collections;
 
 public class Player : MonoBehaviour
 {
     public static Player Instance;
-    public bool canMove = false;
+    public bool canMove = false, canVibrate = true;
     public ParticleSystem winPS;
+    public float vibrateGap = 0.1f, vibrateWait = 1f;
+
+    public enum VibrationType
+    {
+        Warning,
+        Start,
+        Lose,
+        Collision
+    }
 
     private void Awake()
     {
@@ -34,12 +44,33 @@ public class Player : MonoBehaviour
             var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             transform.Translate(new Vector3(mousePos.x - transform.position.x, mousePos.y - transform.position.y, 0) * Time.deltaTime * moveSpeed);
         }
-        if(Physics2D.CircleCast(transform.position, 0.1f, Vector3.forward, 0f, 1 << 6))
+        if(Physics2D.CircleCast(transform.position, 0.5f, Vector3.forward, 0f, 1 << 6))
         {
             Debug.Log("Close to a boundary");
+            StartCoroutine(WarningVibrate(VibrationType.Collision));
         }
     }
+    private IEnumerator WarningVibrate(VibrationType vibe)
+    {
+        if(!canVibrate)
+            yield break;
+        switch(vibe)
+        {
+            case VibrationType.Collision:
+                canVibrate = false;
+                HapticFeedback.LightFeedback();
+                yield return new WaitForSeconds(vibrateWait);
+                canVibrate = true;
+                break;
+            case VibrationType.Lose:
+                HapticFeedback.MediumFeedback();
+                yield return new WaitForSeconds(vibrateWait);
+                canVibrate = true;
+                break;
+        }
+        
 
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Boundary"))
