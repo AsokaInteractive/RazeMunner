@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
         Warning,
         Start,
         Lose,
-        Collision
+        Win,
     }
 
     private void Awake()
@@ -47,16 +47,16 @@ public class Player : MonoBehaviour
         if(Physics2D.CircleCast(transform.position, 0.5f, Vector3.forward, 0f, 1 << 6))
         {
             Debug.Log("Close to a boundary");
-            StartCoroutine(WarningVibrate(VibrationType.Collision));
+            StartCoroutine(WarningVibrate(VibrationType.Warning));
         }
     }
     private IEnumerator WarningVibrate(VibrationType vibe)
-    {
-        if(!canVibrate)
-            yield break;
+    {        
         switch(vibe)
         {
-            case VibrationType.Collision:
+            case VibrationType.Warning:
+                if (!canVibrate)
+                    yield break;
                 canVibrate = false;
                 HapticFeedback.LightFeedback();
                 yield return new WaitForSeconds(vibrateWait);
@@ -67,9 +67,11 @@ public class Player : MonoBehaviour
                 yield return new WaitForSeconds(vibrateWait);
                 canVibrate = true;
                 break;
+            case VibrationType.Start:
+                break;
+            case VibrationType.Win:
+                break;
         }
-        
-
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
