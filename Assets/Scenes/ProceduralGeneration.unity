@@ -763,7 +763,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canMove: 0
+  canVibrate: 1
   winPS: {fileID: 816104823}
+  vibrateGap: 0.1
+  vibrateWait: 1
   moveSpeed: 10
 --- !u!212 &284096323
 SpriteRenderer:
