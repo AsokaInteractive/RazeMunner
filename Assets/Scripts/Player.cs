@@ -22,7 +22,7 @@ public class Player : MonoBehaviour
         if(Instance != null)
         {
             Debug.LogError("Another Player Instance Found");
-            Destroy(Instance.gameObject);
+            Instance.gameObject.SetActive(false);
         }
         Instance = this;
     }
@@ -31,7 +31,8 @@ public class Player : MonoBehaviour
         transform.position = Vector3.zero;
         //Invoke(nameof(StartGame), 1f);
     }
-    public float moveSpeed = 1f;
+    public float moveSpeed = 1f, boundaryCheckDist = 0.25f;
+    public LayerMask boundaryLayer;
     private void Update()
     {
         if(Input.GetMouseButtonDown(0) && !canMove)
@@ -44,7 +45,7 @@ public class Player : MonoBehaviour
             var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             transform.Translate(new Vector3(mousePos.x - transform.position.x, mousePos.y - transform.position.y, 0) * Time.deltaTime * moveSpeed);
         }
-        if(Physics2D.CircleCast(transform.position, 0.5f, Vector3.forward, 0f, 1 << 6))
+        if(Physics2D.CircleCast(transform.position, boundaryCheckDist, Vector3.forward, 0f, boundaryLayer))
         {
             Debug.Log("Close to a boundary");
             StartCoroutine(WarningVibrate(VibrationType.Warning));
@@ -63,13 +64,20 @@ public class Player : MonoBehaviour
                 canVibrate = true;
                 break;
             case VibrationType.Lose:
-                HapticFeedback.MediumFeedback();
+                HapticFeedback.HeavyFeedback();
                 yield return new WaitForSeconds(vibrateWait);
-                canVibrate = true;
                 break;
             case VibrationType.Start:
+                HapticFeedback.MediumFeedback();
+                yield return new WaitForSeconds(vibrateWait);
                 break;
             case VibrationType.Win:
+                HapticFeedback.LightFeedback();
+                yield return new WaitForSeconds(vibrateWait);
+                HapticFeedback.MediumFeedback();
+                yield return new WaitForSeconds(vibrateWait);
+                HapticFeedback.HeavyFeedback();
+                yield return new WaitForSeconds(vibrateWait);
                 break;
         }
     }
