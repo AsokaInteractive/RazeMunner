@@ -65,19 +65,30 @@ public class Player : MonoBehaviour
                 break;
             case VibrationType.Lose:
                 HapticFeedback.HeavyFeedback();
-                yield return new WaitForSeconds(vibrateWait);
+                yield return new WaitForSeconds(vibrateGap);
+                HapticFeedback.HeavyFeedback();
+                yield return new WaitForSeconds(vibrateGap);
+                HapticFeedback.HeavyFeedback();
+                GameManager.instance.Win();
                 break;
             case VibrationType.Start:
                 HapticFeedback.MediumFeedback();
                 yield return new WaitForSeconds(vibrateWait);
+                HapticFeedback.MediumFeedback();
                 break;
             case VibrationType.Win:
                 HapticFeedback.LightFeedback();
+                yield return new WaitForSeconds(vibrateGap);
+                HapticFeedback.LightFeedback();
                 yield return new WaitForSeconds(vibrateWait);
+                HapticFeedback.MediumFeedback();
+                yield return new WaitForSeconds(vibrateGap);
                 HapticFeedback.MediumFeedback();
                 yield return new WaitForSeconds(vibrateWait);
                 HapticFeedback.HeavyFeedback();
-                yield return new WaitForSeconds(vibrateWait);
+                yield return new WaitForSeconds(vibrateGap);
+                HapticFeedback.HeavyFeedback();
+                GameManager.instance.Win();
                 break;
         }
     }
@@ -87,7 +98,8 @@ public class Player : MonoBehaviour
         {
             print("Hit boundary!");
             canMove = false;
-            GameManager.instance.Lose();
+            //GameManager.instance.Lose();
+            StartCoroutine(WarningVibrate(VibrationType.Lose));
         }
         else if(collision.CompareTag("Node"))
         {
@@ -97,11 +109,13 @@ public class Player : MonoBehaviour
                 case Node.NodeType.Start:
                     GameManager.instance.StartGame();
                     print("Hit start node!");
+                    StartCoroutine(WarningVibrate(VibrationType.Start));
                 break;
                 case Node.NodeType.End:
                     canMove = false;
                     winPS.Play();
-                    GameManager.instance.Win();
+                    //GameManager.instance.Win();
+                    StartCoroutine(WarningVibrate(VibrationType.Win));
                     print("Hit end node!");
                 break;
                 case Node.NodeType.Normal:
