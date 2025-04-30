@@ -1,14 +1,25 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 //using CandyCoded.HapticFeedback;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     private List<Node> allNodes;
     public int nodesTouched;
-    public bool roundStarted, canWin;
+    public bool roundStarted, canWin,canVibrate = true, playSound = true, darkScreen = true, canChangeLight = true;
+    public Image darkScreenPanel, vibrateButton, soundButton, lightButton;
+    public Color selectedColor, deselectedColor, screenDarkness;
+
+    public enum PlayerPreferences
+    {
+        CanVibrate,
+        PlaySound,
+        DarkScreen
+    }
 
     private void Awake()
     {
@@ -20,6 +31,7 @@ public class GameManager : MonoBehaviour
         {
             Destroy(this);
         }
+        SetPlayerPrefs();
     }
     private void Start()
     {
@@ -31,18 +43,59 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.R))
             Reload();
     }
-    //public void NodeTouched(Node node)
-    //{
-    //    if (!node.nodeTouched)
-    //    {
-    //        node.nodeTouched = true;
-    //        nodesTouched++;
-    //        if (nodesTouched == allNodes.Count)
-    //        {
-    //            canWin = true;
-    //        }
-    //    }
-    //}
+    private void SetPlayerPrefs()
+    {
+        if(PlayerPrefs.HasKey("canVibrate"))
+        {
+            canVibrate = PlayerPrefs.GetInt("canVibrate") == 1;
+        }
+        else
+        {
+            PlayerPrefs.SetInt("canVibrate", canVibrate ? 1 : 0);
+        }
+        if (PlayerPrefs.HasKey("playSound"))
+        {
+            playSound = PlayerPrefs.GetInt("playSound") == 1;
+        }
+        else
+        {
+            PlayerPrefs.SetInt("playSound", playSound ? 1 : 0);
+        }
+        if (PlayerPrefs.HasKey("darkScreen"))
+        {
+            darkScreen = PlayerPrefs.GetInt("darkScreen") == 1;
+        }
+        else
+        {
+            PlayerPrefs.SetInt("darkScreen", darkScreen ? 1 : 0);
+        }
+    }
+    public void ChangePlayerPrefs(PlayerPreferences pp)
+    {
+        switch(pp)
+        {
+            case PlayerPreferences.CanVibrate:
+                canVibrate = !canVibrate;
+                vibrateButton.color = canVibrate ? selectedColor : deselectedColor;
+                break;
+            case PlayerPreferences.PlaySound:
+                playSound = !playSound;
+                soundButton.color = playSound ? selectedColor : deselectedColor;
+                break;
+            case PlayerPreferences.DarkScreen:
+                if(!canChangeLight)
+                    return;
+                darkScreen = !darkScreen;
+                lightButton.color = darkScreen ? selectedColor : deselectedColor;
+                break;
+        }
+    }
+    private IEnumerator UpdateScreenBrightness()
+    {
+
+        yield return null;
+    }
+
     public void ResetLevel()
     {
         roundStarted = false;
