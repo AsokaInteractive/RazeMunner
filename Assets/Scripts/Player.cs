@@ -37,8 +37,17 @@ public class Player : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(0) && !canMove)
         {
-            canMove = true;
-            transform.position = Vector3.zero;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.transform == transform) // Check if this object was clicked
+                {
+                    canMove = true;
+                    transform.position = Vector3.zero;
+                }
+            }
         }
         if (canMove)
         {
@@ -52,7 +61,9 @@ public class Player : MonoBehaviour
         }
     }
     private IEnumerator WarningVibrate(VibrationType vibe)
-    {        
+    {
+        if (!GameManager.instance.canVibrate)
+            yield break;
         switch(vibe)
         {
             case VibrationType.Warning:

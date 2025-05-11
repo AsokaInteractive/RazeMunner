@@ -70,7 +70,19 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.SetInt("darkScreen", darkScreen ? 1 : 0);
         }
     }
-    public void ChangePlayerPrefs(PlayerPreferences pp)
+    public void ToggleVibrate()
+    {
+        ChangePlayerPrefs(PlayerPreferences.CanVibrate);
+    }
+    public void ToggleSound()
+    {
+        ChangePlayerPrefs(PlayerPreferences.PlaySound);
+    }
+    public void ToggleLight()
+    {
+        ChangePlayerPrefs(PlayerPreferences.DarkScreen);
+    }
+    private void ChangePlayerPrefs(PlayerPreferences pp)
     {
         switch(pp)
         {
@@ -87,8 +99,10 @@ public class GameManager : MonoBehaviour
                     return;
                 darkScreen = !darkScreen;
                 lightButton.color = darkScreen ? selectedColor : deselectedColor;
+                darkScreenPanel.color = darkScreen ? screenDarkness : Color.clear;
                 break;
         }
+        SetPlayerPrefs();
     }
     private IEnumerator UpdateScreenBrightness()
     {
