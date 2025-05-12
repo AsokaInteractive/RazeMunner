@@ -6,7 +6,7 @@ public class Player : MonoBehaviour
 {
     public static Player Instance;
     public bool canMove = false, canVibrate = true;
-    public ParticleSystem winPS;
+    public ParticleSystem winPS, losePS;
     public float vibrateGap = 0.1f, vibrateWait = 1f;
 
     public enum VibrationType
@@ -37,17 +37,19 @@ public class Player : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(0) && !canMove)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit))
+            // Convert mouse position to world point
+            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            
+            // Perform 2D raycast
+            RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
+            
+            // Check if this object was hit
+            if (hit.collider != null && hit.transform == transform)
             {
-                if (hit.transform == transform) // Check if this object was clicked
-                {
-                    canMove = true;
-                    transform.position = Vector3.zero;
-                }
-            }
+                canMove = true;
+                transform.position = Vector3.zero;
+                StartCoroutine(WarningVibrate(VibrationType.Start));
+            }            
         }
         if (canMove)
         {
@@ -62,7 +64,9 @@ public class Player : MonoBehaviour
     }
     private IEnumerator WarningVibrate(VibrationType vibe)
     {
-        if (!GameManager.instance.canVibrate)
+        if(!PlayerPrefs.HasKey("canVibrate"))
+            PlayerPrefs.SetInt("canVibrate", 1);
+        if (PlayerPrefs.GetInt("canVibrate") == 0)
             yield break;
         switch(vibe)
         {
@@ -80,7 +84,7 @@ public class Player : MonoBehaviour
                 HapticFeedback.HeavyFeedback();
                 yield return new WaitForSeconds(vibrateGap);
                 HapticFeedback.HeavyFeedback();
-                GameManager.instance.Win();
+                GameManager.instance.Lose();
                 break;
             case VibrationType.Start:
                 HapticFeedback.MediumFeedback();
@@ -110,6 +114,8 @@ public class Player : MonoBehaviour
             print("Hit boundary!");
             canMove = false;
             //GameManager.instance.Lose();
+            losePS.Play();
+            //GetComponent<TrailRenderer>().enabled = false;
             StartCoroutine(WarningVibrate(VibrationType.Lose));
         }
         else if(collision.CompareTag("Node"))
@@ -120,7 +126,7 @@ public class Player : MonoBehaviour
                 case Node.NodeType.Start:
                     GameManager.instance.StartGame();
                     print("Hit start node!");
-                    StartCoroutine(WarningVibrate(VibrationType.Start));
+                    //StartCoroutine(WarningVibrate(VibrationType.Start));
                 break;
                 case Node.NodeType.End:
                     canMove = false;

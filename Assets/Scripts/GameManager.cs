@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     private List<Node> allNodes;
     public int nodesTouched;
-    public bool roundStarted, canWin,canVibrate = true, playSound = true, darkScreen = true, canChangeLight = true;
+    public bool roundStarted, canWin;
     public Image darkScreenPanel, vibrateButton, soundButton, lightButton;
     public Color selectedColor, deselectedColor, screenDarkness;
 
@@ -43,32 +43,35 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.R))
             Reload();
     }
+    private bool GetPlayerPrefs(PlayerPreferences pp)
+    {
+        switch (pp)
+        {
+            case PlayerPreferences.CanVibrate:
+                return PlayerPrefs.GetInt("canVibrate") == 1;
+            case PlayerPreferences.PlaySound:
+                return PlayerPrefs.GetInt("playSound") == 1;
+            case PlayerPreferences.DarkScreen:
+                return PlayerPrefs.GetInt("darkScreen") == 1;
+            default:
+                return false;
+        }
+    }
     private void SetPlayerPrefs()
     {
-        if(PlayerPrefs.HasKey("canVibrate"))
+        if(!PlayerPrefs.HasKey("canVibrate"))
         {
-            canVibrate = PlayerPrefs.GetInt("canVibrate") == 1;
+            PlayerPrefs.SetInt("canVibrate", 1);
         }
-        else
+        if (!PlayerPrefs.HasKey("playSound"))
         {
-            PlayerPrefs.SetInt("canVibrate", canVibrate ? 1 : 0);
+            PlayerPrefs.SetInt("playSound", 1);
         }
-        if (PlayerPrefs.HasKey("playSound"))
+        if (!PlayerPrefs.HasKey("darkScreen"))
         {
-            playSound = PlayerPrefs.GetInt("playSound") == 1;
+            PlayerPrefs.SetInt("darkScreen", 1);
         }
-        else
-        {
-            PlayerPrefs.SetInt("playSound", playSound ? 1 : 0);
-        }
-        if (PlayerPrefs.HasKey("darkScreen"))
-        {
-            darkScreen = PlayerPrefs.GetInt("darkScreen") == 1;
-        }
-        else
-        {
-            PlayerPrefs.SetInt("darkScreen", darkScreen ? 1 : 0);
-        }
+        darkScreenPanel.color = GetPlayerPrefs(PlayerPreferences.DarkScreen) ? screenDarkness : Color.clear;
     }
     public void ToggleVibrate()
     {
@@ -87,19 +90,19 @@ public class GameManager : MonoBehaviour
         switch(pp)
         {
             case PlayerPreferences.CanVibrate:
-                canVibrate = !canVibrate;
-                vibrateButton.color = canVibrate ? selectedColor : deselectedColor;
+                PlayerPrefs.SetInt("canVibrate", GetPlayerPrefs(PlayerPreferences.CanVibrate) ? 0 : 1);
+                vibrateButton.color = GetPlayerPrefs(PlayerPreferences.CanVibrate) ? selectedColor : deselectedColor;
                 break;
             case PlayerPreferences.PlaySound:
-                playSound = !playSound;
-                soundButton.color = playSound ? selectedColor : deselectedColor;
+                PlayerPrefs.SetInt("playSound", GetPlayerPrefs(PlayerPreferences.PlaySound) ? 0 : 1);
+                soundButton.color = GetPlayerPrefs(PlayerPreferences.PlaySound) ? selectedColor : deselectedColor;
                 break;
             case PlayerPreferences.DarkScreen:
-                if(!canChangeLight)
-                    return;
-                darkScreen = !darkScreen;
-                lightButton.color = darkScreen ? selectedColor : deselectedColor;
-                darkScreenPanel.color = darkScreen ? screenDarkness : Color.clear;
+                //if(!canChangeLight)
+                //    return;
+                PlayerPrefs.SetInt("darkScreen", GetPlayerPrefs(PlayerPreferences.DarkScreen) ? 0 : 1);
+                lightButton.color = GetPlayerPrefs(PlayerPreferences.DarkScreen) ? selectedColor : deselectedColor;
+                darkScreenPanel.color = GetPlayerPrefs(PlayerPreferences.DarkScreen) ? screenDarkness : Color.clear;
                 break;
         }
         SetPlayerPrefs();
@@ -114,7 +117,10 @@ public class GameManager : MonoBehaviour
     {
         roundStarted = false;
         Player.Instance.canMove = false;
+        Player.Instance.losePS.Stop();
+        Player.Instance.losePS.Clear();
         Player.Instance.transform.position = Vector3.zero;
+        //Player.Instance.gameObject.GetComponent<TrailRenderer>().enabled = true;
     }
     public void Win()
     {
